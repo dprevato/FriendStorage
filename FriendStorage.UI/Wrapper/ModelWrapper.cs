@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -119,14 +120,27 @@ public class ModelWrapper<T> : Observable, IRevertibleChangeTracking
         }
     }
 
-    //protected void RegisterCollection<TWrapper, TModel>(ChangeTrackingCollection<TWrapper> wrapperCollection, List<TModel> modelCollection) where TWrapper : ModelWrapper<TModel>
-    //{
-    //    wrapperCollection.CollectionChanged += (s, e) =>
-    //    {
-    //        modelCollection.Clear();
-    //        modelCollection.AddRange(wrapperCollection.Select(x => x.Model));
-    //    };
-    //}
+    protected void RegisterCollection<TWrapper, TModel>(ObservableCollection<TWrapper> wrapperCollection, List<TModel> modelCollection) where TWrapper : ModelWrapper<TModel>
+    {
+        wrapperCollection.CollectionChanged += ((s, e) =>
+        {
+            if (e.OldItems != null)
+            {
+                foreach (var item in e.OldItems.Cast<TWrapper>())
+                {
+                    modelCollection.Remove(item.Model);
+                }
+            }
+
+            if (e.NewItems != null)
+            {
+                foreach (var item in e.NewItems.Cast<TWrapper>())
+                {
+                    modelCollection.Add(item.Model);
+                }
+            }
+        });
+    }
 
     protected void RegisterComplex<TModel>(ModelWrapper<TModel> wrapper)
     {
