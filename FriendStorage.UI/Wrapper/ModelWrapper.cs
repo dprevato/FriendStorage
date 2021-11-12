@@ -26,7 +26,8 @@ public class ModelWrapper<T> : Observable, IRevertibleChangeTracking
     }
 
 
-    #region Implementation of IRevertibleChangeTracking
+    #region Implementation of IRevertibleChangeTracking  
+
     public bool IsChanged => _originalValues.Count > 0 || _trackingObjects.Any(x => x.IsChanged); // basta che ci sia un solo elemento per rendere Changed == false
 
     public void AcceptChanges()
@@ -36,7 +37,8 @@ public class ModelWrapper<T> : Observable, IRevertibleChangeTracking
         {
             item.AcceptChanges();
         }
-        OnPropertyChanged(string.Empty);  // Questo chiama RaisePropertyChanged per tutte le property della classe
+
+        OnPropertyChanged(string.Empty); // Questo chiama RaisePropertyChanged per tutte le property della classe
     }
 
     public void RejectChanges()
@@ -45,12 +47,14 @@ public class ModelWrapper<T> : Observable, IRevertibleChangeTracking
         {
             typeof(T).GetProperty(entry.Key).SetValue(Model, entry.Value);
         }
+
         _originalValues.Clear();
         foreach (var item in _trackingObjects)
         {
             item.RejectChanges();
         }
-        OnPropertyChanged(string.Empty);  // Questo chiama RaisePropertyChanged per tutte le property della classe
+
+        OnPropertyChanged(string.Empty); // Questo chiama RaisePropertyChanged per tutte le property della classe
     }
 
     #endregion
@@ -66,7 +70,7 @@ public class ModelWrapper<T> : Observable, IRevertibleChangeTracking
     }
 
     // TODO: Verificare se questa funzione fa sì che venga chiamata due volte PropertyGet
-    protected TVal GetOriginalValue<TVal>([CallerMemberName] string propertyName = null) => _originalValues.ContainsKey(propertyName) ? (TVal)_originalValues[propertyName] : GetProperty<TVal>(propertyName);
+    protected TVal GetOriginalValue<TVal>(string propertyName) => _originalValues.ContainsKey(propertyName) ? (TVal)_originalValues[propertyName] : GetProperty<TVal>(propertyName);
 
     // GetChanged e GetOriginalValue sono i due metodi che mi servono per implementare il change tracking.
     // La logica di GetChanged consiste nel verificare se il dictionary contiene tra le chiavi la property specificata; se c'è, significa che

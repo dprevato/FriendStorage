@@ -8,20 +8,20 @@ namespace FriendStorage.UI.Wrapper
 
         #region property Id
         public int Id { get => GetProperty<int>(); set => SetProperty(value); }
-        public int IdOriginalValue => GetOriginalValue<int>();
-        public bool IdIsChanged => GetIsChanged();
+        public int IdOriginalValue => GetOriginalValue<int>(nameof(Id));
+        public bool IdIsChanged => GetIsChanged(nameof(Id));
         #endregion property Id
 
         #region property Email
         public string Email { get => GetProperty<string>(); set => SetProperty(value); }
-        public string EmailOriginalValue => GetOriginalValue<string>();
-        public bool EmailIsChanged => GetIsChanged();
+        public string EmailOriginalValue => GetOriginalValue<string>(nameof(Email));
+        public bool EmailIsChanged => GetIsChanged(nameof(Email));
         #endregion property Email
 
         #region property Comment
         public string Comment { get => GetProperty<string>(); set => SetProperty(value); }
-        public string CommentOriginalValue => GetOriginalValue<string>();
-        public bool CommentIsChanged => GetIsChanged();
+        public string CommentOriginalValue => GetOriginalValue<string>(nameof(Comment));
+        public bool CommentIsChanged => GetIsChanged(nameof(Comment));
         #endregion property Comment
 
 
