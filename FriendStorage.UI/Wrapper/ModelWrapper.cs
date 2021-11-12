@@ -26,7 +26,7 @@ public class ModelWrapper<T> : Observable, IRevertibleChangeTracking
     }
 
 
-    #region Implementation of IRevertibleChangeTracking  
+    #region Implementation of IRevertibleChangeTracking
 
     public bool IsChanged => _originalValues.Count > 0 || _trackingObjects.Any(x => x.IsChanged); // basta che ci sia un solo elemento per rendere Changed == false
 

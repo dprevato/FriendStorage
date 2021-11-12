@@ -22,6 +22,7 @@ namespace FriendStorage.UI.Wrapper
             }
 
             Address = new AddressWrapper(model.Address);
+            RegisterComplex(Address);
         }
 
         private void InitializeCollectionProperties(Friend model)
