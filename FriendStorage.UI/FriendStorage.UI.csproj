@@ -62,7 +62,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Behaviors\ChangeBehavior.cs" />
     <Compile Include="Command\DelegateCommand.cs" />
+    <Compile Include="Converters\DatePickerOriginalValueConverter.cs" />
     <Compile Include="DataProvider\FriendDataProvider.cs" />
     <Compile Include="DataProvider\IFriendDataProvider.cs" />
     <Compile Include="DataProvider\Lookups\FriendGroupLookupProvider.cs" />
@@ -97,6 +99,10 @@
     <Compile Include="Wrapper\ModelWrapper.cs" />
     <Compile Include="Wrapper\Observable.cs" />
     <Page Include="Styles\Brushes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ControlBaseStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
