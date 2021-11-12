@@ -1,6 +1,5 @@
 ﻿using FriendStorage.Model;
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 
@@ -32,7 +31,7 @@ namespace FriendStorage.UI.Wrapper
                 throw new ArgumentException("Emails cannot be null");
             }
 
-            Emails = new ObservableCollection<FriendEmailWrapper>(model.Emails.Select(e => new FriendEmailWrapper(e)));
+            Emails = new ChangeTrackingCollection<FriendEmailWrapper>(model.Emails.Select(e => new FriendEmailWrapper(e)));
             RegisterCollection(Emails, model.Emails);
         }
 
@@ -117,6 +116,6 @@ namespace FriendStorage.UI.Wrapper
 
         public AddressWrapper Address { get; private set; }
 
-        public ObservableCollection<FriendEmailWrapper> Emails { get; private set; }
+        public ChangeTrackingCollection<FriendEmailWrapper> Emails { get; private set; }
     }
 }

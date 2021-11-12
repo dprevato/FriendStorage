@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -124,34 +123,28 @@ public class ModelWrapper<T> : Observable, IRevertibleChangeTracking
         }
     }
 
-    protected void RegisterCollection<TWrapper, TModel>(ObservableCollection<TWrapper> wrapperCollection, List<TModel> modelCollection) where TWrapper : ModelWrapper<TModel>
+    protected void RegisterCollection<TWrapper, TModel>(ChangeTrackingCollection<TWrapper> wrapperCollection, List<TModel> modelCollection) where TWrapper : ModelWrapper<TModel>
     {
         wrapperCollection.CollectionChanged += ((s, e) =>
         {
-            if (e.OldItems != null)
-            {
-                foreach (var item in e.OldItems.Cast<TWrapper>())
-                {
-                    modelCollection.Remove(item.Model);
-                }
-            }
-
-            if (e.NewItems != null)
-            {
-                foreach (var item in e.NewItems.Cast<TWrapper>())
-                {
-                    modelCollection.Add(item.Model);
-                }
-            }
+            modelCollection.Clear();
+            modelCollection.AddRange(wrapperCollection.Select(x => x.Model));
         });
+
+        RegisterTrackingObject(wrapperCollection);
     }
 
     protected void RegisterComplex<TModel>(ModelWrapper<TModel> wrapper)
     {
-        if (!_trackingObjects.Contains(wrapper))
+        RegisterTrackingObject(wrapper);
+    }
+
+    private void RegisterTrackingObject<TTrackingObject>(TTrackingObject trackingObject) where TTrackingObject : IRevertibleChangeTracking, INotifyPropertyChanged
+    {
+        if (!_trackingObjects.Contains(trackingObject))
         {
-            _trackingObjects.Add(wrapper);
-            wrapper.PropertyChanged += TrackingObjectPropertyChanged;
+            _trackingObjects.Add(trackingObject);
+            trackingObject.PropertyChanged += TrackingObjectPropertyChanged;
         }
     }
 

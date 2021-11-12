@@ -84,8 +84,8 @@ namespace FriendStorage.UI.Wrapper
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            var added = this.Where(current => _originalCollection.All(original => original != current));
-            var removed = _originalCollection.Where(original => this.All(current => current != original));
+            var added = this.Where(current => _originalCollection.All(original => original != current)).ToList();
+            var removed = _originalCollection.Where(original => this.All(current => current != original)).ToList();
             var modified = this.Except(added).Except(removed).Where(item => item.IsChanged).ToList();
 
             AttachItemPropertyChangedHandler(added);

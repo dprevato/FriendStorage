@@ -135,7 +135,7 @@ public class ChangeTrackingCollectionsTests
 
         c.Remove(emailToRemove);
         emailToModify.Email = "modified@thomasclaudiushuber.com";
-        Assert.AreEqual("thomas@thomasclaudiushuber.com", emailToModify.EmailOriginal);
+        Assert.AreEqual("thomas@thomasclaudiushuber.com", emailToModify.EmailOriginalValue);
 
         Assert.AreEqual(2, c.Count);
         Assert.AreEqual(1, c.AddedItems.Count);
@@ -154,7 +154,7 @@ public class ChangeTrackingCollectionsTests
 
         Assert.IsFalse(emailToModify.IsChanged);
         Assert.AreEqual("modified@thomasclaudiushuber.com", emailToModify.Email);
-        Assert.AreEqual("modified@thomasclaudiushuber.com", emailToModify.EmailOriginal);
+        Assert.AreEqual("modified@thomasclaudiushuber.com", emailToModify.EmailOriginalValue);
 
         Assert.IsFalse(c.IsChanged);
     }
@@ -170,7 +170,7 @@ public class ChangeTrackingCollectionsTests
 
         c.Remove(emailToRemove);
         emailToModify.Email = "modified@thomasclaudiushuber.com";
-        Assert.AreEqual("thomas@thomasclaudiushuber.com", emailToModify.EmailOriginal);
+        Assert.AreEqual("thomas@thomasclaudiushuber.com", emailToModify.EmailOriginalValue);
 
         Assert.AreEqual(2, c.Count);
         Assert.AreEqual(1, c.AddedItems.Count);
@@ -189,7 +189,7 @@ public class ChangeTrackingCollectionsTests
 
         Assert.IsFalse(emailToModify.IsChanged);
         Assert.AreEqual("thomas@thomasclaudiushuber.com", emailToModify.Email);
-        Assert.AreEqual("thomas@thomasclaudiushuber.com", emailToModify.EmailOriginal);
+        Assert.AreEqual("thomas@thomasclaudiushuber.com", emailToModify.EmailOriginalValue);
 
         Assert.IsFalse(c.IsChanged);
     }
