@@ -64,6 +64,7 @@
     </ApplicationDefinition>
     <Compile Include="Behaviors\ChangeBehavior.cs" />
     <Compile Include="Command\DelegateCommand.cs" />
+    <Compile Include="Converters\ComboBoxOriginalValueConverter.cs" />
     <Compile Include="Converters\DatePickerOriginalValueConverter.cs" />
     <Compile Include="DataProvider\FriendDataProvider.cs" />
     <Compile Include="DataProvider\IFriendDataProvider.cs" />
