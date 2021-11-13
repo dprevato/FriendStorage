@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FriendStorage.UI.Wrapper
 {
-    public class ChangeTrackingCollection<T> : ObservableCollection<T>, IRevertibleChangeTracking where T : class, IRevertibleChangeTracking, INotifyPropertyChanged
+    public class ChangeTrackingCollection<T> : ObservableCollection<T>, IValidatableTrackingObject where T : class, IValidatableTrackingObject
     {
         private IList<T> _originalCollection;
 
@@ -138,6 +138,12 @@ namespace FriendStorage.UI.Wrapper
             }
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
         }
+
+        #endregion
+
+        #region Implementation of IValidatableTrackingObject
+
+        public bool IsValid => true;
 
         #endregion
     }

@@ -10,10 +10,10 @@ using System.Runtime.CompilerServices;
 
 namespace FriendStorage.UI.Wrapper;
 
-public class ModelWrapper<T> : NotifyDataErrorInfoBase, IRevertibleChangeTracking
+public class ModelWrapper<T> : NotifyDataErrorInfoBase, IValidatableTrackingObject
 {
     private readonly Dictionary<string, object> _originalValues; // Serve per il Change Tracking
-    private readonly List<IRevertibleChangeTracking> _trackingObjects;
+    private readonly List<IValidatableTrackingObject> _trackingObjects;
 
     public T Model { get; }
 
@@ -22,7 +22,7 @@ public class ModelWrapper<T> : NotifyDataErrorInfoBase, IRevertibleChangeTrackin
         if (model == null) throw new ArgumentNullException(nameof(model));
         Model = model;
         _originalValues = new Dictionary<string, object>();
-        _trackingObjects = new List<IRevertibleChangeTracking>();
+        _trackingObjects = new List<IValidatableTrackingObject>();
         Validate();
     }
 
@@ -31,7 +31,7 @@ public class ModelWrapper<T> : NotifyDataErrorInfoBase, IRevertibleChangeTrackin
 
     public bool IsChanged => _originalValues.Count > 0 || _trackingObjects.Any(x => x.IsChanged); // basta che ci sia un solo elemento per rendere Changed == false
 
-    public bool IsValid => !HasErrors;
+    public bool IsValid => !HasErrors && _trackingObjects.All(x => x.IsValid);
 
     public void AcceptChanges()
     {
@@ -163,7 +163,7 @@ public class ModelWrapper<T> : NotifyDataErrorInfoBase, IRevertibleChangeTrackin
         RegisterTrackingObject(wrapper);
     }
 
-    private void RegisterTrackingObject<TTrackingObject>(TTrackingObject trackingObject) where TTrackingObject : IRevertibleChangeTracking, INotifyPropertyChanged
+    private void RegisterTrackingObject(IValidatableTrackingObject trackingObject)
     {
         if (!_trackingObjects.Contains(trackingObject))
         {
@@ -177,6 +177,11 @@ public class ModelWrapper<T> : NotifyDataErrorInfoBase, IRevertibleChangeTrackin
         if (e.PropertyName == nameof(IsChanged))
         {
             OnPropertyChanged(nameof(IsChanged));
+        }
+
+        else if (e.PropertyName == nameof(IsValid))
+        {
+            OnPropertyChanged(nameof(IsValid));
         }
     }
 

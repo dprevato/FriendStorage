@@ -102,6 +102,7 @@
     <Compile Include="Wrapper\ChangeTrackingCollection.cs" />
     <Compile Include="Wrapper\FriendEmailWrapper.cs" />
     <Compile Include="Wrapper\FriendWrapper.cs" />
+    <Compile Include="Wrapper\IValidatableTrackingObject.cs" />
     <Compile Include="Wrapper\ModelWrapper.cs" />
     <Compile Include="Wrapper\NotifyDataErrorInfoBase.cs" />
     <Compile Include="Wrapper\Observable.cs" />
