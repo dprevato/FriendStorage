@@ -8,7 +8,7 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
              d:DesignHeight="350" d:DesignWidth="700"
-             d:DataContext="{d:DesignInstance Type=vm:FriendEditViewModel, IsDesignTimeCreatable=True}" 
+             d:DataContext="{d:DesignInstance Type=vm:FriendEditViewModel, IsDesignTimeCreatable=True}"
              Background="#333333">
     <Grid>
         <Grid.RowDefinitions>
@@ -32,7 +32,7 @@
 
         <Label Content="Firstname" Margin="5" />
         <TextBox Text="{Binding Friend.FirstName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                 Grid.Column="1"/>
+                 Grid.Column="1" />
 
         <Label Content="Lastname" Grid.Row="2" Margin="5" />
         <TextBox Text="{Binding Friend.LastName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
@@ -76,7 +76,24 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Email"
                                     Binding="{Binding Email,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                                    Width="300" />
+                                    Width="300">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockBaseStyle}">
+                            <Setter Property="behaviors:ChangeBehavior.IsActive" Value="False" />
+                            <Setter Property="behaviors:ChangeBehavior.IsChanged" Value="{Binding EmailIsChanged}" />
+                            <Setter Property="behaviors:ChangeBehavior.OriginalValue"
+                                    Value="{Binding EmailOriginalValue}" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                    <DataGridTextColumn.EditingElementStyle>
+                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                            <Setter Property="behaviors:ChangeBehavior.IsActive" Value="False" />
+                            <Setter Property="behaviors:ChangeBehavior.IsChanged" Value="{Binding EmailIsChanged}" />
+                            <Setter Property="behaviors:ChangeBehavior.OriginalValue"
+                                    Value="{Binding EmailOriginalValue}" />
+                        </Style>
+                    </DataGridTextColumn.EditingElementStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Comment"
                                     Binding="{Binding Comment,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                     Width="*" />
