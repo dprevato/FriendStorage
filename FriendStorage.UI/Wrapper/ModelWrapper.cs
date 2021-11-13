@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 
 namespace FriendStorage.UI.Wrapper;
 
-public class ModelWrapper<T> : NotifyDataErrorInfoBase, IValidatableTrackingObject
+public class ModelWrapper<T> : NotifyDataErrorInfoBase, IValidatableTrackingObject, IValidatableObject
 {
     private readonly Dictionary<string, object> _originalValues; // Serve per il Change Tracking
     private readonly List<IValidatableTrackingObject> _trackingObjects;
@@ -23,8 +23,14 @@ public class ModelWrapper<T> : NotifyDataErrorInfoBase, IValidatableTrackingObje
         Model = model;
         _originalValues = new Dictionary<string, object>();
         _trackingObjects = new List<IValidatableTrackingObject>();
+        InitializeComplexProperties(model);
+        InitializeCollectionProperties(model);
         Validate();
     }
+
+    protected virtual void InitializeCollectionProperties(T model) { }
+
+    protected virtual void InitializeComplexProperties(T model) { }
 
 
     #region Implementation of IRevertibleChangeTracking
@@ -153,6 +159,7 @@ public class ModelWrapper<T> : NotifyDataErrorInfoBase, IValidatableTrackingObje
         {
             modelCollection.Clear();
             modelCollection.AddRange(wrapperCollection.Select(x => x.Model));
+            Validate();
         });
 
         RegisterTrackingObject(wrapperCollection);
@@ -186,5 +193,14 @@ public class ModelWrapper<T> : NotifyDataErrorInfoBase, IValidatableTrackingObje
     }
 
     #endregion Methods
+
+    #region Implementation of IValidatableObject
+
+    public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        yield break;
+    }
+
+    #endregion
 }
 

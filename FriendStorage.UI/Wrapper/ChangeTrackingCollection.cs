@@ -60,24 +60,32 @@ namespace FriendStorage.UI.Wrapper
 
         private void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            var item = sender as T;
-            if (_addedItems.Contains(item)) return;
-
-            if (item!.IsChanged)
+            if (e.PropertyName == nameof(IsValid))
             {
-                if (!_modifiedItems.Contains(item))
-                {
-                    _modifiedItems.Add(item);
-                }
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsValid)));
             }
             else
             {
-                if (_modifiedItems.Contains(item))
+                var item = sender as T;
+                if (_addedItems.Contains(item)) return;
+
+                if (item!.IsChanged)
                 {
-                    _modifiedItems.Remove(item);
+                    if (!_modifiedItems.Contains(item))
+                    {
+                        _modifiedItems.Add(item);
+                    }
                 }
+                else
+                {
+                    if (_modifiedItems.Contains(item))
+                    {
+                        _modifiedItems.Remove(item);
+                    }
+                }
+
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
             }
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
         }
 
         #region Overrides of ObservableCollection<T>
@@ -97,6 +105,7 @@ namespace FriendStorage.UI.Wrapper
 
             base.OnCollectionChanged(e);
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsValid)));
         }
 
         #endregion
@@ -136,6 +145,7 @@ namespace FriendStorage.UI.Wrapper
             {
                 item.RejectChanges();
             }
+
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
         }
 
@@ -143,7 +153,7 @@ namespace FriendStorage.UI.Wrapper
 
         #region Implementation of IValidatableTrackingObject
 
-        public bool IsValid => true;
+        public bool IsValid => this.All(x => x.IsValid);
 
         #endregion
     }
