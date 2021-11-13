@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:FriendStorage.UI.ViewModel"
              xmlns:behaviors="clr-namespace:FriendStorage.UI.Behaviors"
+             xmlns:controls="clr-namespace:FriendStorage.UI.View.Controls"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
              d:DesignHeight="350" d:DesignWidth="700"
@@ -20,7 +21,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+               <RowDefinition Height="Auto" />
+     </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="200" />
@@ -72,27 +74,12 @@
                     HorizontalAlignment="Right" />
         </StackPanel>
         <DataGrid ItemsSource="{Binding Friend.Emails}" SelectedItem="{Binding SelectedEmail,Mode=TwoWay}" Grid.Row="6"
+                  behaviors:DataGridChangeBehavior.IsActive="True"
                   Grid.Column="1" Grid.ColumnSpan="4" Margin="0 5" Width="538">
-            <DataGrid.Columns>
+            <DataGrid.Columns> 
                 <DataGridTextColumn Header="Email"
                                     Binding="{Binding Email,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                     Width="300">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockBaseStyle}">
-                            <Setter Property="behaviors:ChangeBehavior.IsActive" Value="False" />
-                            <Setter Property="behaviors:ChangeBehavior.IsChanged" Value="{Binding EmailIsChanged}" />
-                            <Setter Property="behaviors:ChangeBehavior.OriginalValue"
-                                    Value="{Binding EmailOriginalValue}" />
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                    <DataGridTextColumn.EditingElementStyle>
-                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                            <Setter Property="behaviors:ChangeBehavior.IsActive" Value="False" />
-                            <Setter Property="behaviors:ChangeBehavior.IsChanged" Value="{Binding EmailIsChanged}" />
-                            <Setter Property="behaviors:ChangeBehavior.OriginalValue"
-                                    Value="{Binding EmailOriginalValue}" />
-                        </Style>
-                    </DataGridTextColumn.EditingElementStyle>
                 </DataGridTextColumn>
                 <DataGridTextColumn Header="Comment"
                                     Binding="{Binding Comment,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
@@ -100,7 +87,9 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <StackPanel Grid.Row="7" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left"
+        <controls:ChangeTrackingCollectionInfo DataContext="{Binding Friend.Emails}" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="4"/>
+
+        <StackPanel Grid.Row="8" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left"
                     VerticalAlignment="Bottom">
             <Button Content="Save" Command="{Binding SaveCommand}" Margin="5" />
             <Button Content="Reset" Command="{Binding ResetCommand}" Margin="5" />

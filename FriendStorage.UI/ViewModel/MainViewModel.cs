@@ -4,6 +4,7 @@ using FriendStorage.UI.View.Services;
 using Microsoft.Practices.Prism.PubSubEvents;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 
@@ -103,6 +104,15 @@ namespace FriendStorage.UI.ViewModel
             if (friendDetailVmToClose != null)
             {
                 FriendEditViewModels.Remove(friendDetailVmToClose);
+            }
+        }
+
+        public void OnClosing(CancelEventArgs cancelEventArgs)
+        {
+            if (FriendEditViewModels.Any(x => x.Friend.IsChanged))
+            {
+                var result = _messageDialogService.ShowYesNoDialog("Close application?", "You'll lose your changes if you close the application. Close it?", MessageDialogResult.No);
+                cancelEventArgs.Cancel = result == MessageDialogResult.No;
             }
         }
     }
