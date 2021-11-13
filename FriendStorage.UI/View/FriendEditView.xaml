@@ -46,7 +46,7 @@
 
         <Label Content="Is Developer" Grid.Row="4" Margin="5 0" />
         <CheckBox IsChecked="{Binding Friend.IsDeveloper,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                  Grid.Row="4" VerticalAlignment="Center" Grid.Column="1" />
+                  Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="1" />
 
         <Label Content="Friendgroup" Grid.Row="5" Margin="5" />
         <ComboBox ItemsSource="{Binding FriendGroupLookup}"
@@ -87,7 +87,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <controls:ChangeTrackingCollectionInfo DataContext="{Binding Friend.Emails}" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="4"/>
+        <controls:ChangeTrackingCollectionInfo DataContext="{Binding Friend.Emails, ValidatesOnNotifyDataErrors=False}" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="4"/>
 
         <StackPanel Grid.Row="8" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left"
                     VerticalAlignment="Bottom">
