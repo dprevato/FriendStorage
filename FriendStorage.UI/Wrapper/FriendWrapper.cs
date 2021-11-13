@@ -1,5 +1,6 @@
 ﻿using FriendStorage.Model;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 
@@ -64,6 +65,7 @@ namespace FriendStorage.UI.Wrapper
 
         #region property FirstName
 
+        [Required(ErrorMessage = "FirstName is required")]
         public string FirstName
         {
             get => GetProperty<string>();

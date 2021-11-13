@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using FriendStorage.Model;
+﻿using FriendStorage.Model;
 using FriendStorage.UI.Wrapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FriendStorage.UITests.Wrapper
 {
@@ -12,8 +12,10 @@ namespace FriendStorage.UITests.Wrapper
         private Friend _friend;
 
         [TestInitialize]
-        public void Initialize() {
-            _friend = new Friend {
+        public void Initialize()
+        {
+            _friend = new Friend
+            {
                 FirstName = "Thomas",
                 Address = new Address { City = "Müllheim" },
                 Emails = new List<FriendEmail>()
@@ -21,7 +23,8 @@ namespace FriendStorage.UITests.Wrapper
         }
 
         [TestMethod]
-        public void ShouldReturnValidationErrorIfFirstNameIsEmpty() {
+        public void ShouldReturnValidationErrorIfFirstNameIsEmpty()
+        {
             var wrapper = new FriendWrapper(_friend);
             Assert.IsFalse(wrapper.HasErrors);
 
@@ -37,12 +40,15 @@ namespace FriendStorage.UITests.Wrapper
         }
 
         [TestMethod]
-        public void ShouldRaiseErrorsChangedEventWhenFirstNameIsSetToEmptyAndBack() {
+        public void ShouldRaiseErrorsChangedEventWhenFirstNameIsSetToEmptyAndBack()
+        {
             var fired = false;
             var wrapper = new FriendWrapper(_friend);
 
-            wrapper.ErrorsChanged += (s, e) => {
-                if (e.PropertyName == nameof(wrapper.FirstName)) {
+            wrapper.ErrorsChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(wrapper.FirstName))
+                {
                     fired = true;
                 }
             };
@@ -56,7 +62,8 @@ namespace FriendStorage.UITests.Wrapper
         }
 
         [TestMethod]
-        public void ShouldSetIsValid() {
+        public void ShouldSetIsValid()
+        {
             var wrapper = new FriendWrapper(_friend);
             Assert.IsTrue(wrapper.IsValid);
 
@@ -68,12 +75,15 @@ namespace FriendStorage.UITests.Wrapper
         }
 
         [TestMethod]
-        public void ShouldRaisePropertyChangedEventForIsValid() {
+        public void ShouldRaisePropertyChangedEventForIsValid()
+        {
             var fired = false;
             var wrapper = new FriendWrapper(_friend);
 
-            wrapper.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(wrapper.IsValid)) {
+            wrapper.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(wrapper.IsValid))
+                {
                     fired = true;
                 }
             };
@@ -87,7 +97,8 @@ namespace FriendStorage.UITests.Wrapper
         }
 
         [TestMethod]
-        public void ShouldSetErrorsAndIsValidAfterInitialization() {
+        public void ShouldSetErrorsAndIsValidAfterInitialization()
+        {
             _friend.FirstName = "";
             var wrapper = new FriendWrapper(_friend);
 
@@ -100,7 +111,8 @@ namespace FriendStorage.UITests.Wrapper
         }
 
         [TestMethod]
-        public void ShouldRefreshErrorsAndIsValidWhenRejectingChanges() {
+        public void ShouldRefreshErrorsAndIsValidWhenRejectingChanges()
+        {
             var wrapper = new FriendWrapper(_friend);
             Assert.IsTrue(wrapper.IsValid);
             Assert.IsFalse(wrapper.HasErrors);

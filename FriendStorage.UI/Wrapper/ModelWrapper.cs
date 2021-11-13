@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -9,7 +10,7 @@ using System.Runtime.CompilerServices;
 
 namespace FriendStorage.UI.Wrapper;
 
-public class ModelWrapper<T> : Observable, IRevertibleChangeTracking
+public class ModelWrapper<T> : NotifyDataErrorInfoBase, IRevertibleChangeTracking
 {
     private readonly Dictionary<string, object> _originalValues; // Serve per il Change Tracking
     private readonly List<IRevertibleChangeTracking> _trackingObjects;
@@ -22,12 +23,15 @@ public class ModelWrapper<T> : Observable, IRevertibleChangeTracking
         Model = model;
         _originalValues = new Dictionary<string, object>();
         _trackingObjects = new List<IRevertibleChangeTracking>();
+        Validate();
     }
 
 
     #region Implementation of IRevertibleChangeTracking
 
     public bool IsChanged => _originalValues.Count > 0 || _trackingObjects.Any(x => x.IsChanged); // basta che ci sia un solo elemento per rendere Changed == false
+
+    public bool IsValid => !HasErrors;
 
     public void AcceptChanges()
     {
@@ -52,7 +56,7 @@ public class ModelWrapper<T> : Observable, IRevertibleChangeTracking
         {
             item.RejectChanges();
         }
-
+        Validate();
         OnPropertyChanged(string.Empty); // Questo chiama RaisePropertyChanged per tutte le property della classe
     }
 
@@ -86,9 +90,29 @@ public class ModelWrapper<T> : Observable, IRevertibleChangeTracking
         // La linea seguente contiene codice per aggiornare il valore originale della property - parte del progetto ChangeTracking
         UpdateOriginalValue(currentValue, newValue, propertyName);
         propertyInfo.SetValue(Model, newValue); // Questo è il SetValue di Reflection!
+        Validate();
         OnPropertyChanged(propertyName);
         OnPropertyChanged($"{propertyName}IsChanged");
         return true;
+    }
+
+    private void Validate()
+    {
+        ClearErrors();
+        var results = new List<ValidationResult>();
+        var context = new ValidationContext(this);
+        Validator.TryValidateObject(this, context, results, validateAllProperties: true);
+        if (results.Any())
+        {
+            var propertyNames = results.SelectMany(x => x.MemberNames).Distinct().ToList();
+
+            foreach (var propertyName in propertyNames)
+            {
+                Errors[propertyName] = results.Where(x => x.MemberNames.Contains(propertyName)).Select(x => x.ErrorMessage).Distinct().ToList();
+                OnErrorsChanged(propertyName);
+            }
+        }
+        OnPropertyChanged(nameof(IsValid));
     }
 
     protected bool SetProperty<T1>(T1 newValue, Action onChanged, [CallerMemberName] string propertyName = null)
@@ -158,3 +182,4 @@ public class ModelWrapper<T> : Observable, IRevertibleChangeTracking
 
     #endregion Methods
 }
+
