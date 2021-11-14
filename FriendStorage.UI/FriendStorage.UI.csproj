@@ -98,14 +98,15 @@
     <Compile Include="View\NavigationView.xaml.cs">
       <DependentUpon>NavigationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Wrapper\AddressWrapper.cs" />
-    <Compile Include="Wrapper\ChangeTrackingCollection.cs" />
-    <Compile Include="Wrapper\FriendEmailWrapper.cs" />
-    <Compile Include="Wrapper\FriendWrapper.cs" />
-    <Compile Include="Wrapper\IValidatableTrackingObject.cs" />
-    <Compile Include="Wrapper\ModelWrapper.cs" />
-    <Compile Include="Wrapper\NotifyDataErrorInfoBase.cs" />
-    <Compile Include="Wrapper\Observable.cs" />
+    <Compile Include="Wrapper\Base\ChangeTrackingCollection.cs" />
+    <Compile Include="Wrapper\Base\IValidatableTrackingObject.cs" />
+    <Compile Include="Wrapper\Base\ModelWrapper.cs" />
+    <Compile Include="Wrapper\Base\NotifyDataErrorInfoBase.cs" />
+    <Compile Include="Wrapper\Generated\GenerateModelWrappers.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GenerateModelWrappers.tt</DependentUpon>
+    </Compile>
     <Page Include="Styles\Brushes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -224,7 +225,15 @@
   <ItemGroup>
     <Resource Include="FriendStorageIcon.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Wrapper\Generated\GenerateModelWrappers.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GenerateModelWrappers.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
