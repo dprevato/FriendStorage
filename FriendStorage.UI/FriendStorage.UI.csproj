@@ -102,6 +102,10 @@
     <Compile Include="Wrapper\Base\IValidatableTrackingObject.cs" />
     <Compile Include="Wrapper\Base\ModelWrapper.cs" />
     <Compile Include="Wrapper\Base\NotifyDataErrorInfoBase.cs" />
+    <Compile Include="Wrapper\Generated\AddressWrapper.g.cs" />
+    <Compile Include="Wrapper\Generated\FriendEmailWrapper.g.cs" />
+    <Compile Include="Wrapper\Generated\FriendGroupWrapper.g.cs" />
+    <Compile Include="Wrapper\Generated\FriendWrapper.g.cs" />
     <Compile Include="Wrapper\Generated\GenerateModelWrappers.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -1,94 +1,194 @@
-﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
 <#@ assembly name="System.Core" #>
-<#@ assembly name="$(SolutionDir)\FriendStorage.Model\bin\debug\FriendStorage.Model.dll" #>
+<#@ assembly name="$(SolutionDir)\FriendStorage.Model\bin\Debug\FriendStorage.Model.dll" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.IO" #>
-<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.Collections" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="FriendStorage.Model" #>
 <#@ output extension=".cs" #>
-
 <#
-	foreach(var modelType in GetModelTypes()) {
-		var simpleProperties = modelType.GetProperties().Where(x => x.PropertyType.IsValueType || x.PropertyType == typeof(string)).ToList();
+  foreach (var modelType in GetModelTypes())
+  {
+    var simpleProperties = modelType.GetProperties()
+          .Where(p => p.PropertyType.IsValueType || p.PropertyType == typeof(string)).ToList();
 
+    var complexProperties = modelType.GetProperties().Except(simpleProperties)
+          .Where(p => p.PropertyType.IsClass 
+	                  && !typeof(IEnumerable).IsAssignableFrom(p.PropertyType)).ToList();
 
-
+    var collectionProperties = modelType.GetProperties()
+	      .Except(simpleProperties)
+		  .Except(complexProperties)
+	      .Where(p=>p.PropertyType.IsGenericType).ToList();
 
 #> /* Class <#=modelType.Name#>Wrapper
-	* 
-	* ATTENZIONE:
-	* Questo file è stato generato automaticamente. Qualsiasi modifica apportata ad esso verrebbe riscritta alla successiva 
-	* rigenerazione del codice.
-	* Daniele Prevato, © 2022
-	*/
+    * 
+    * ATTENZIONE:
+    * Questo file è stato generato automaticamente. Qualsiasi modifica apportata ad esso verrebbe riscritta alla successiva 
+    * rigenerazione del codice.
+    * Daniele Prevato, © 2022
+    */
 
-
-	using System;
-	using System.Linq;
-	using FriendStorage.Model;
+using System;
+using System.Linq;
+using FriendStorage.Model;
 
 namespace FriendStorage.UI.Wrapper
 {
-	public partial class <#=modelType.Name#>Wrapper : ModelWrapper<<#=modelType.Name#>> 
-	{
-		public <#=modelType.Name#>Wrapper(<#=modelType.Name#> model) : base(model) { }
-
+  public partial class <#=modelType.Name#>Wrapper : ModelWrapper<<#=modelType.Name#>>
+  {
+    public <#=modelType.Name#>Wrapper(<#=modelType.Name#> model) : base(model)
+    {
+    }
 <#
-		GenerateSimpleProperties(simpleProperties);
+	GenerateSimpleProperties(simpleProperties);
+	GenerateComplexProperties(complexProperties);
+	GenerateCollectionProperties(collectionProperties);
+    GenerateInitializeComplexProperties(modelType.Name, complexProperties);
+	GenerateInitializeCollectionProperties(modelType.Name, collectionProperties);
 #>
-	}
+  }
 }
-<#		
-		SaveGeneratedCodeAsFile($"{modelType.Name}Wrapper.g.cs");
-	}
+<#  
+  SaveGeneratedCodeAsFile(modelType.Name + "Wrapper.g.cs");
+  }
 #>
 
+<#+ 
+  private IEnumerable<Type> GetModelTypes()
+  {
+	return typeof(Friend).Assembly.GetTypes();
+  }
 
-<#+
-	
-	private IEnumerable<Type> GetModelTypes() {
-		return typeof(Friend).Assembly.GetTypes();
-	}
+  private void SaveGeneratedCodeAsFile(string fileName)
+  {
+    string dir = Path.GetDirectoryName(Host.TemplateFile);
+  
+    string outputFilePath = Path.Combine(dir, fileName);
+    File.WriteAllText(outputFilePath, GenerationEnvironment.ToString()); 
+ 
+    GenerationEnvironment.Clear();
+  }
 
-	private void SaveGeneratedCodeAsFile(string fileName) {
-		var dir = Path.GetDirectoryName(Host.TemplateFile);
-		var outputFilePath = Path.Combine(dir, fileName);
-		File.WriteAllText(outputFilePath, GenerationEnvironment.ToString());
+  private string GetTypeName(Type type)
+  {
+    if (type.IsGenericType)
+    {
+      var genericArguments = type.GetGenericArguments().Select(t => GetTypeName(t)).ToArray();
+      var typeDefinition = type.GetGenericTypeDefinition().FullName;
+      typeDefinition = typeDefinition.Substring(0, typeDefinition.IndexOf('`'));
+      return string.Format("{0}<{1}>", typeDefinition, string.Join(",", genericArguments));
+    }
+    else
+    {
+      return type.FullName;
+    }
+  }
 
-		GenerationEnvironment.Clear();
-	}
-
-	private string GetTypeName(Type type){
-		if(type.IsGenericType) {
-			var genericArguments = type.GetGenericArguments().Select(x => GetTypeName(x)).ToArray();
-			var typeDefinition = type.GetGenericTypeDefinition().FullName;
-			typeDefinition = typeDefinition.Substring(0, typeDefinition.IndexOf('`'));
-			return string.Format("{0}<{1}>", typeDefinition, string.Join(",", genericArguments));
-		}
-		else {
-			return type.FullName;
-		}
-	}
-
-	private void GenerateSimpleProperties(IEnumerable<System.Reflection.PropertyInfo> properties) {
-		foreach(var property in properties) {
-			var propertyType = GetTypeName(property.PropertyType);
-			var propertyName = property.Name;
+  private void GenerateSimpleProperties(IEnumerable<PropertyInfo> properties)
+  {
+    foreach (var property in properties)
+    {
+      var propertyType = GetTypeName(property.PropertyType);
+      var propertyName= property.Name;
 #>
 
-	#region property <#=propertyName#>
-	public <#=propertyType#> <#=propertyName#>
-	{
-		get => GetProperty<<#=propertyType#>>();
-		set => SetProperty(value);
-	}
+    #region property <#=propertyName#>
+    public <#=propertyType#> <#=propertyName#> 	{ get => GetProperty<<#=propertyType#>>(); set => SetProperty(value); }
+    public <#=propertyType#> <#=propertyName#>OriginalValue => GetOriginalValue<<#=propertyType#>>(nameof(<#=propertyName#>));
+    public bool <#=propertyName#>IsChanged => GetIsChanged(nameof(<#=propertyName#>));
+    #endregion property <#=propertyName#>
 
-	public <#=propertyType#> <#=propertyName#>OriginalValue => GetOriginalValue<<#=propertyType#>>(nameof(<#=propertyName#>));
-	public bool <#=propertyName#>IsChanged => GetIsChanged(nameof(<#=propertyName#>));
-	#endregion property <#=propertyName#>
+<#+ 
+    }
+  }
+
+  private void GenerateComplexProperties(IEnumerable<PropertyInfo> properties)
+  {
+    foreach (var property in properties)
+    {
+      var propertyType = property.PropertyType.Name;
+      var propertyName= property.Name;
+#>
+    public <#=propertyType#>Wrapper <#=propertyName#> { get; private set; }
+
+<#+   
+    }
+  }
+
+  private void GenerateCollectionProperties(IEnumerable<PropertyInfo> properties)
+  {
+    foreach (var property in properties)
+    {
+      var itemType = property.PropertyType.GenericTypeArguments[0].Name;
+      var propertyName= property.Name;
+#>
+    public ChangeTrackingCollection<<#= itemType #>Wrapper> <#= propertyName #> { get; private set; }
+
+<#+  
+    }
+  }
+
+  private void GenerateInitializeComplexProperties(string modelTypeName, IEnumerable<PropertyInfo> properties)
+  {
+    if(properties.Any())
+    {
+#>
+    
+    protected override void InitializeComplexProperties(<#= modelTypeName #> model)
+    {
 <#+
-		}
-	}
+	  foreach (var complexProperty in properties)
+      {
+		var propertyName = complexProperty.Name;
+		var propertyType = complexProperty.PropertyType.Name;
+#>
+      if (model.<#= propertyName #> == null)
+      {
+        throw new ArgumentException("<#= propertyName #> cannot be null");
+      }
+      <#= propertyName #> = new <#= propertyType #>Wrapper(model.<#= propertyName #>);
+      RegisterComplex(<#= propertyName #>);
+<#+
+      }
+#>
+    }
+<#+
+    }
+  }
+
+  private void GenerateInitializeCollectionProperties(string modelTypeName, IEnumerable<System.Reflection.PropertyInfo> properties)
+  {
+    if(properties.Any())
+    {
+#>
+
+    protected override void InitializeCollectionProperties(<#= modelTypeName#> model)
+    {
+<#+
+      foreach(var property in properties)
+      {
+		var itemType = property.PropertyType.GenericTypeArguments[0].Name;
+		var propertyName = property.Name;
+		   
+#>
+      if (model.<#= propertyName#> == null)
+      {
+        throw new ArgumentException("<#= propertyName#> cannot be null");
+      }
+ 
+      <#= propertyName #> = new ChangeTrackingCollection<<#= itemType #>Wrapper>(
+        model.<#= propertyName #>.Select(e => new <#= itemType #>Wrapper(e)));
+      RegisterCollection(<#= propertyName #>, model.<#= propertyName #>);
+<#+
+     }
+#>
+    }
+<#+
+    }
+  }
+
 #>
