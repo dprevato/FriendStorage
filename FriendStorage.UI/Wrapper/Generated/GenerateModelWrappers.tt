@@ -180,8 +180,7 @@ namespace FriendStorage.UI.Wrapper
         throw new ArgumentException("<#= propertyName#> cannot be null");
       }
  
-      <#= propertyName #> = new ChangeTrackingCollection<<#= itemType #>Wrapper>(
-        model.<#= propertyName #>.Select(e => new <#= itemType #>Wrapper(e)));
+      <#= propertyName #> = new ChangeTrackingCollection<<#= itemType #>Wrapper>(model.<#= propertyName #>.Select(e => new <#= itemType #>Wrapper(e)));
       RegisterCollection(<#= propertyName #>, model.<#= propertyName #>);
 <#+
      }

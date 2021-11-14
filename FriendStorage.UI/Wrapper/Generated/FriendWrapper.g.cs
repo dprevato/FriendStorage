@@ -81,8 +81,7 @@ namespace FriendStorage.UI.Wrapper
         throw new ArgumentException("Emails cannot be null");
       }
  
-      Emails = new ChangeTrackingCollection<FriendEmailWrapper>(
-        model.Emails.Select(e => new FriendEmailWrapper(e)));
+      Emails = new ChangeTrackingCollection<FriendEmailWrapper>(model.Emails.Select(e => new FriendEmailWrapper(e)));
       RegisterCollection(Emails, model.Emails);
     }
   }

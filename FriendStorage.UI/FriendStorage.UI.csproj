@@ -102,6 +102,9 @@
     <Compile Include="Wrapper\Base\IValidatableTrackingObject.cs" />
     <Compile Include="Wrapper\Base\ModelWrapper.cs" />
     <Compile Include="Wrapper\Base\NotifyDataErrorInfoBase.cs" />
+    <Compile Include="Wrapper\Custom\AddressWrapper.cs" />
+    <Compile Include="Wrapper\Custom\FriendEmailWrapper.cs" />
+    <Compile Include="Wrapper\Custom\FriendWrapper.cs" />
     <Compile Include="Wrapper\Generated\AddressWrapper.g.cs" />
     <Compile Include="Wrapper\Generated\FriendEmailWrapper.g.cs" />
     <Compile Include="Wrapper\Generated\FriendGroupWrapper.g.cs" />
@@ -238,6 +241,7 @@
       <LastGenOutput>GenerateModelWrappers.cs</LastGenOutput>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
